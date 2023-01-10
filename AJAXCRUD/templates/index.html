@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>        
+    <script src=" https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+    <title>Index</title>
+</head>
+
+<body>
+    <form class="row g-3" method="POST" id="userform" enctype="multipart/form-data" >
+        {% csrf_token %}
+
+        <input type="text" name="uid" id="uid">
+        <div>
+            <div class="col-md-4">
+                <label for="validationDefault01" class="form-label">First name</label>
+                <input type="text" class="form-control" name="fname" id="fnameid" required>
+            </div>
+        </div>
+        <div>
+            <div class="col-md-4">
+                <label for="validationDefault02" class="form-label">Last name</label>
+                <input type="text" class="form-control" name="lname" id="lnameid" required>
+            </div>
+        </div>
+        <!-- Gender -->
+        <div>
+            <div class="col-md-3">
+                <label for="validationDefault04" class="form-label">Gender</label>
+                <select class="form-select" name="gender" id="genderid" required>
+                    <option>Male</option>
+                    <option>Female</option>
+                </select>
+            </div>
+        </div>
+        <!-- Hobbies -->
+        <div>
+            <label for="hobby">Hobbies</label>
+            <div class="form-check form-check-inline">
+                <input name="selecthobbies" class="hobbies" id="hobbiesid" type="checkbox" value="Cricket">
+                <label class="form-check-label" for="inlineCheckbox1">Cricket</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input name="selecthobbies" class="hobbies" id="hobbiesid" type="checkbox" value="Football">
+                <label class="form-check-label" for="inlineCheckbox2">Football</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input name="selecthobbies" class="hobbies" id="hobbiesid" type="checkbox" value="Badminton">
+                <label class="form-check-label" for="inlineCheckbox3">Badminton</label>
+            </div>
+            <div>
+                <label for="dispalyhobbies"></label>
+                <input id='checkedvalues' type="hidden" name="hobbies">
+            </div>
+        </div>
+        <!-- Image -->
+
+        <div class="col-mb-3">
+            <label for="validationDefault01" class="form-label">Upload Profile Picture</label>
+            <input type="file" class="form-control" name="image" aria-label="file example" id="imageid" accept="image/*" multiple="multiple"  >
+        </div>
+
+        <!-- Occupation  Radio button-->
+        <div>
+            <div class="form-check">
+                <input class="result" type="radio" name="occupation" value="studying" id="occupationid">
+                <label class="form-check-label" for="flexRadioDefault1">
+                    Studying
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="result" type="radio" name="occupation" value="job" id="occupationid" checked>
+                <label class="form-check-label" for="flexRadioDefault2">
+                    Job
+                </label>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-primary" type="button" id="btnsave">Submit form</button>
+        </div>
+        <br>
+    </form>
+    <!--  Show data -->
+    <div>
+        <h1>Show Data</h1>
+    </div>
+
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Hobbies</th>
+                    <th scope="col">Occupation</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                {% for user in user_data%}
+                <tr>
+                    <td>{{user.id}}</td>
+                    <td>{{user.fname}} {{user.lname}}</td>
+                    <td>{{user.gender}}</td>
+                    <td>{{user.hobbies}}</td>
+                    <td>{{user.occupation}}</td>
+                    <td><img src="image/{{user.image}}" height=50 width=50 ></td>
+                    <td>
+                        <input type="button" value="Update" data-uid="{{user.id}}"
+                            class="btn btn-secondary btn-sm btn-update">
+                        <input type="button" value="Delete" data-uid="{{user.id}}" class="btn btn-danger btn-sm btn-del">
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    <!-- <script>
+        $(document).ready(function () {
+            $("#btnsave").on('click', function () {
+                // var checkbox_value = "";
+                // $(":checkbox").each(function () {
+                //     var ischecked = $(this).is(":checked");
+                //     if (ischecked) {
+                //         checkbox_value += $(this).val() + " ";
+                //     }
+                // });
+                // $('#checkedvalues').val(checkbox_value);
+                // alert(checkbox_value);
+                var hobbies = [];
+                $('.hobbies:checked').each(function() {
+                    hobbies.push($(this).val());
+                })
+                
+                console.log(hobbies);   
+            });
+
+        });
+
+    </script> -->
+    {% include "ajax.html" %}
+
+</body>
+
+</html>

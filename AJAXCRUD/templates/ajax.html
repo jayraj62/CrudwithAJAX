@@ -1,0 +1,157 @@
+<script>
+
+    // Insert
+
+    $("#btnsave").click(function () {
+        output = "";
+        let usid = $("uid").val()
+        let fname = $("#fnameid").val()
+        let lname = $("#lnameid").val()
+        let gender = $("#genderid").val()
+        // let image = $("#imageid").val()
+        // var file = $('#imageid').prop("files")[0];       
+        // var image = new FormData(document.getElementById('userform'));  
+        // var file =document.getElementById('imageid').files[0];  
+        // image.append("imageid", file); 
+        let image = document.getElementById("imageid").files[0];
+        // let hobbies = $("[name=hobbies]").val()     
+        var hobbies = [];
+        $('.hobbies:checked').each(function () {
+            hobbies.push($(this).val());
+        })
+        console.log(hobbies.toString(','));
+        hobbies = hobbies.toString(',');
+        var occupation = " ";
+        $('.result:checked').val(function () {
+            occupation += $(this).val()
+        });
+        console.log(occupation)
+
+        let csr = $("input[name=csrfmiddlewaretoken").val()
+        mydata = new FormData();
+        mydata.append("uid", usid);
+        mydata.append("fname", fname);
+        mydata.append("lname", lname);
+        mydata.append("gender", gender);
+        mydata.append("image", image, image.name);
+        mydata.append("hobbies", hobbies);
+        mydata.append("occupation", occupation);
+        mydata.append("csrfmiddlewaretoken", csr);
+        let url = uid ? "{% url 'update' %}" : "{% url 'insert' %}";
+        $.ajax({
+            url: url,
+            method: "POST",
+            data: mydata,
+            mimeType: "multipart/form-data",
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+
+                // parse json string in json object
+                let data = JSON.parse(response);
+                let user_data = data.user_data;
+                let message;
+
+                if (data.status == "Save") {
+                    message = "Form Submitted SuccessFully";
+
+                    //update data in table
+                    let output = "";
+                    for (let user of user_data) {
+                        output += `<tr>
+                <td>${user.id}</td>
+                <td>${user.fname} ${user.lname} </td>
+                <td>${user.gender}</td>
+                <td>${user.hobbies}</td>
+                <td>${user.occupation}</td>
+                <td><img src="${user.image}" height=50 width=50 ></td>
+                <td>
+                    <input type='button' class='btn btn-secondary btn-sm btn-update' value='Update' data-uid="${user.id}">
+                    <input type='button' class='btn btn-danger btn-sm btn-del' value='Delete' data-uid="${user.id}">
+                </td>
+            </tr>`;
+                    }
+                    $("#tbody").html(output);
+
+                } else {
+                    message = "Unable To Save Data";
+                }
+
+                //show message
+                $("#msg").text(message);
+                $("#msg").show();
+
+                // clear form data
+                $("#uid").val("");
+                $("form")[0].reset();
+            },
+        });
+    })
+    //Update
+
+    $("#tbody").on("click", ".btn-update", function () {
+        console.log("Update button clicked");
+        let id = $(this).attr("data-uid");
+        let csr = $("input[name=csrfmiddlewaretoken").val();
+        console.log(id);
+        mydata = { uid: id, csrfmiddlewaretoken: csr };
+        $.ajax({
+            url: "{% url 'updateuser' %}",
+            method: "POST",
+            data: mydata,
+            success: function (data) {
+                console.log(data);
+                $("#uid").val(data.id);
+                $("#fnameid").val(data.fname);
+                $("#lnameid").val(data.lname);
+                $("#genderid").val(data.gender);
+                // $("#hobbiesid").val(data.hobbies);
+                let hob = data.hobbies.split(',')
+                $('.hobbies').each(function (h, i) {
+                    if ( $.inArray(i, hob)!==0){
+                        $(this).prop('checked',true)
+                    }
+                    else{
+                        $(this).prop('checked',false)
+                    }
+                   
+                    console.log(i)
+                })
+                $("#occupationid").val(data.occupation);
+                // $("#imageid").val(data.image);
+
+            },
+        });
+    });
+    // DELETE 
+
+    $("#tbody").on("click", ".btn-del", function () {
+        // console.log("delete button clicked");
+        let id = $(this).attr("data-uid");
+        let csr = $("input[name=csrfmiddlewaretoken").val();
+        // console.log(id);
+
+        mydata = { uid: id, csrfmiddlewaretoken: csr };
+        delete_row = this;
+        $.ajax({
+            url: "{% url 'delete' %}",
+            method: "POST",
+            data: mydata,
+            success: function (data) {
+                console.log(data);
+                if (data.status == 1) {
+                    $("#msg").text("Data Deleted Successfully");
+                    $("#msg").show();
+                    $(delete_row).closest("tr").fadeOut();
+
+                }
+                if (data.status == 0) {
+                    $("#msg").text("UNABLE TO DELETE DATA");
+                    $("#msg").show();
+                }
+            },
+        });
+    });
+
+</script>

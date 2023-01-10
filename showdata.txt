@@ -1,0 +1,431 @@
+<tr>
+        {% for pt in ptfrm %}
+
+        <td>{{pt.id}}</td>
+        <td>{{pt.fname}}</td>
+        <td>{{pt.lname}}</td>
+        <td>{{ pt.dob|date:"m-d-Y" }}</td>
+        <td>{{pt.gender}}</td>
+        <td>
+          <a href='/update/{{pt.id}}' class="btn btn-primary" type="submit">Update</a>
+          <!-- <a href= '/deletedata/{{pt.id}}'  class="btn btn-danger" type="submit"  data-bs-toggle="modal" data-bs-target="#delete">Delete</a> -->
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete">Delete</button>
+        </td>
+        <!-- Modal -->
+        <div class="modal fade" id="delete" tabindex="-1" aria-labelledby="delete" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Delete</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>Delete your record??</p>
+              </div>
+              <div class="modal-footer">
+                <a href='/deletedata/{{pt.id}}' class="btn btn-danger" type="submit">Yes</a>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </tr> 
+      {% endfor %}
+
+
+git link for server side datatables
+https://github.com/monnierj/django-datatables-server-sid
+
+
+
+view for ajax view
+
+# def patients_json(Server):
+#     patients_s=patients.objects.all()
+#     data=[patient.get_data() for patient in patients_s]
+#     response={'data':data}
+#     return JsonResponse(response)
+# return JsonResponse(response)
+
+
+
+"columns":[
+        {"data":"id"},
+        {"data":"fname"},
+        {"data":"lname"},
+        {"data":"dob"},
+        {"data":"gender"},
+                 
+      ],
+
+
+
+
+searching sorting
+
+  <script>
+    $("#example").dataTable({
+      serverSide: true,
+			sAjaxSource: "/data",  // new url
+      "columns":[
+        {"data":"id"},
+        {"data":"fname"},
+        {"data":"lname"},
+        {"data":"dob"},
+        {"data":"gender"},
+                 
+      ],
+
+      paging:true,
+      pageLength: 10,
+      lengthChange:true,
+      autoWidth:true,
+      searching:true,
+      bInfo:true,
+      bSort:true
+    })
+
+  </script>
+
+
+
+searching sorting server side from github(https://github.com/monnierj/django-datatables-server-sid)
+  <script>
+    $(document).ready(function () 
+    {
+      $('#example').DataTable(
+        {
+          serverSide: true,
+
+          ajax:
+          {
+						url:"{% url 'data' %}"
+					},
+
+          columns: 
+          [
+            { "data": "id" },
+            { "data": "fname" },
+            { "data": "lname" },
+            { "data": "dob" },
+            { "data": "gender" },
+          ],
+
+        });
+    });
+  </script>
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      <!-- {% for i in users%}
+          <tr>
+            <td>{{i.user_id__fname}} {{i.user_id__lname}}</td>           
+            <td>{{i.product_id__product_name}}</td>
+            <td>{{i.qty}}</td> -->
+            <!-- <td>{{i.product_id__product_qty}}</td> -->
+
+
+
+
+ // 
+        // "ajax": "{% url 'order_list_json' %}",
+
+=============================================================================
+
+'render': function (data) { if (data === null) return ""; 
+            return window.moment(data).format('MM-DD-YYYY HH:MM:SS')},
+'render': function (data) { if (data === null) return ""; 
+            return window.moment(data).format('MM-DD-YYYY')},
+=============================================================================
+
+
+
+
+   '''    if column == "dob":
+            return row.dob.strftime("%m-%d-%Y")
+        if column == "dos":
+            return row.dos.strftime("%m-%d-%Y")'''
+==============================================================================
+utkrash srivastva
+==============================================================================
+
+{
+             " targets": 3,
+              render: DataTable.render.date('D MMM YYYY', 'MMM D, YY', 'en'),
+            },
+
+
+=============================================================================
+return $.extend({},d,{
+                    "search_keywords":$(#searchBtn).val()
+                })
+===========================================================================
+changing date foramt in my firstproject
+
+
+  <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+  <script src="//cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
+ $.fn.dataTable.moment('DD-MM-YYYY');
+ { name: "dob", data: 3,
+          'render': function (data) { if (data === null) return ""; 
+          return window.moment(data).format('MM-DD-YYYY')}
+=================================================================================================================
+code to change date time format at File.Views.py line 240 
+trint_upload_dt=trint_upload_dt[5:7]+'-'+trint_upload_dt[8:10]+'-'+trint_upload_dt[0:4]+' '+trint_upload_dt[11:19]
+
+2022-12-08 13:26:06+00:00
+===================================================================================================================
+to change the date format at Date $ Time (front-end)  make changes at  File.Views.py line 154 ...
+
+
+
+==================================
+search code
+
+line304fileviews.py
+
+search = self.request.GET.get('search[value]', None)
+        if search:
+            dt=search
+            if len(search.split('-'))==3:
+                dt=search.split('-')
+                dt=dt[2]+'-'+dt[0]+'-'+dt[1]
+            dttime=search
+            if len(search.split('-'))==3:
+                dttime=search.split('-')
+                dttime=dttime[2]+'-'+dttime[0]+'-'+dttime[1]
+                if len(search.split(' '))==2:
+                    dtwithtime=search.split(' ')
+                    dttime=dttime[2]+'-'+dttime[0]+'-'+dttime[1]+' '+dtwithtime[1]
+                print(dttime)
+
+==================================================================================
+==================================================================================
+ <form method="POST" name="myform">
+        {% csrf_token %}
+        <div class="col-md-4">
+            <label for="validationCustom01" class="form-label">First name</label>
+            <input type="text" name="fname" class="form-control" id="validationCustom01">
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label for="validationCustom02" class="form-label">Last name</label>
+            <input type="text" name="lname" class="form-control" id="validationCustom02">
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <label for="validationCustom04" class="form-label">Gender</label>
+            <select class="form-select" id="validationCustom04">
+                <option selected disabled value="">Choose...</option>
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+
+        </div>
+        <div>
+            <label for="hobby">Hobbies</label>
+            <div class="form-check form-check-inline">
+                <input class="selecthobbies" type="checkbox" value="Cricket">
+                <label class="form-check-label" for="inlineCheckbox1">Cricket</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="selecthobbies" type="checkbox" value="Football">
+                <label class="form-check-label" for="inlineCheckbox2">Football</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="selecthobbies" type="checkbox" id="Checkbox" value="Badminton">
+                <label class="form-check-label" for="inlineCheckbox3">Badminton</label>
+            </div>
+            <div>
+                <label for="dispalyhobbies"></label>
+                <input id='checkedvalues' type="hidden" name="hobbies">
+            </div>
+
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Submit form</button>
+            </div>
+        </div>
+    </form>
+
+
+    <!-- <script>
+        function seterror(id,error){
+        element=document.getElementById(id);
+        element.getElementsByClassName('formerror')[0].innerHTMl=error;
+ 
+        }
+        function validateform() {
+            var x = document.forms["myform"]["fname"].value;
+            if (x.length == 0) {
+                seterror("x","Firstname must be filled out");
+                return flase;
+            }
+            
+        }
+       
+        // For hobbies
+        $(document).ready(function () {
+            $('.selecthobbies').click(function () {
+                var txt = '';
+                $('.selecthobbies:checked').each(function () {
+                    txt +=$(this).val() + ','
+                });
+                txt=txt.substring(0,txt.length-1);
+                $('#checkedvalues').val(txt);
+
+            });
+        }
+        );
+    </script> -->
+
+
++=============================================================================================
+Script for bootstrap form validation   
+
+$(document).ready(function() {
+  $("#submitButton").click(function() {
+
+    //Fetch form to apply custom Bootstrap validation
+    var form = $("#signup-form")
+    //alert(form.prop('id')) //test to ensure calling form correctly
+
+    if (form.checkValidity() === false) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    form.addClass('was-validated')
+  })
+})
+
+
+==============================================================================
+script for interdepdent dropbox
+
+
+	
+   $(document).ready(function () {
+            if (document.getElementById('a').value == '1')
+                document.getElementById("b").value = '1','2','3','4';
+            else if (document.getElementById('a').value == '2')
+                document.getElementById("b").value ='5','6','7','8';
+            else if (document.getElementById('a').value =='3')
+                document.getElementById("b").value = '9','10','11','12';
+            else if (document.getElementById('a').value == '4')
+                document.getElementById("b").value = '13','14','15','16';
+        });
+
+
+
+ $(document).on('change','select#selectcountries', function () {
+            var url = $("#signupform").attr("projects-drop-url");
+            var id = $(this).val();
+
+            console.log("urls and project_id", url, id);
+
+            $.ajax({
+                type: "GET",
+                url: url + "?id=" + id,
+                success: function (data) {
+                    $("#sw").html(data);
+                }
+            });
+
+        });
+
+
+ for (let i = 0; i <= state_id.length; i++) {
+                $(state_field).html(`<option value="${state_id[i]["_id"]}" selected="">"${state_id[i]["city_name"]}"</option>`)
+            }
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+
+======================================================================================
+@csrf_exempt
+def insert_data(request):
+    if request.method == 'POST':
+        uform = UserForm(request.POST,request.FILES)
+        if uform.is_valid():
+            # usid = request.POST.get('uid')
+            # print(usid)
+            # image=request.FILE.get('image')
+            # Userinfo.objects.create(image=image)
+            # print(image)    
+            fname = request.POST['fname']
+            print(fname)
+            lname = request.POST['lname']
+            gender = request.POST['gender']
+            hobbies = request.POST['hobbies']
+            occupation= request.POST['occupation']
+            image= request.POST,request.FILES['image']
+            print(image)
+            # if (usid ==''):
+            user = Userinfo(fname=fname, lname=lname,gender=gender,hobbies=hobbies,occupation=occupation,image=image)
+            # else:
+            #    user = Userinfo(id=usid,fname=fname, lname=lname, gender=gender, hobbies=hobbies, occupation=occupation,image=image)
+            user.save()
+            usr=Userinfo.objects.values()
+            print(usr)
+            user_data=list(usr)
+            return JsonResponse({'status': 'Save','user_data':user_data})
+        else:
+            return JsonResponse({'status': 0})
+
+===========================================================================================
+
+Crud with Ajax
+
+
+  // if (fname == "") {
+        //     console.log("please enter fname")
+        // } else if (lname == "") {
+        //     console.log("please enter lname")
+        // } else {
+        //     console.log(fname);
+        //     console.log(lname);
+        //     console.log(gender);
+        //     console.log(hobbies);
+        //     console.log(image);
+        //     // uid:usid,
+        //     mydata = { fname: fname, lname: lname, gender: gender, hobbies: hobbies, occupation: occupation, image: image, csrfmiddlewaretoken: csr };
+            $.ajax({
+                url: "{% url 'insert' %}",
+                method: "POST",
+                cache: false,
+                processData: false,
+                contentType: false,
+                data: mydata,
+                success: function (data) {
+                    x = data.user_data;
+                    if (data.status == "Save") {
+                        console.log("Data Saved")
+                        //  to display data through ajax in table/template
+                        for (i = 0; i < x.length; i++) {
+                            output += "<tr><td>" + x[i].id + "</td><td>" + [x[i].fname + ' ' + x[i].lname] + "</td><td>" + x[i].gender + "</td><td>" + x[i].hobbies + "</td><td>" + x[i].occupation + "</td><td>" + x[i].image + "</td><td> <input type='button' class='btn btn-secondary btn-sm btn-update' value='Update' data-uid=" + x[i].id + "> <input type='button' class='btn btn-danger btn-sm btn-del' value='Delete' data-uid=" + x[i].id + ">";
+                        }
+                        $("#tbody").html(output);
+                        $("#uid").val("");
+                        $("form")[0].reset();
+                    }
+                    if (data.status == 0) {
+                        console.log("Data Not Saved")
+                    }
+                },
+            });
+        }
+    });
+
